@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, FileText, GraduationCap, Award, ArrowRight } from "lucide-react";
@@ -115,11 +116,12 @@ const Credentials = () => {
               to Canadian nursing certification.
             </p>
             <Button 
+              asChild
               size="lg" 
               variant="secondary"
               className="btn-hover-lift font-bold text-lg px-8"
             >
-              Start Your Assessment
+              <Link to="/signup">Start Your Assessment</Link>
             </Button>
           </CardContent>
         </Card>

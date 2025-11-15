@@ -33,7 +33,7 @@ const SignUp = () => {
     });
     
     setTimeout(() => {
-      navigate("/jobs");
+      navigate("/next-steps");
     }, 2000);
   };
 
