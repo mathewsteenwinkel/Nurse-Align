@@ -1,12 +1,17 @@
+import { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, ArrowRight, ExternalLink, Briefcase } from "lucide-react";
+import { CheckCircle, ArrowRight, ExternalLink, Briefcase, Sparkles, Loader2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import Navbar from "@/components/Navbar";
 
 const NextSteps = () => {
   const location = useLocation();
   const formData = location.state?.formData || {};
+  const [aiSuggestions, setAiSuggestions] = useState<string>("");
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(true);
+  const [hasError, setHasError] = useState(false);
   
   const isFromMexico = formData.currentCountry?.toLowerCase().includes("mexico");
   const isFromUS = formData.currentCountry?.toLowerCase().includes("us") || 
@@ -105,6 +110,43 @@ const NextSteps = () => {
     }
   };
 
+  // Fetch AI suggestions on component mount
+  useEffect(() => {
+    const fetchAiSuggestions = async () => {
+      // Only fetch if we have required form data
+      if (!formData.fullName || !formData.currentCountry || !formData.nursingLicense) {
+        setIsLoadingSuggestions(false);
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/suggestions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ formData }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.error('API Error:', errorData);
+          throw new Error(errorData.error || 'Failed to get suggestions');
+        }
+
+        const data = await response.json();
+        setAiSuggestions(data.suggestions);
+      } catch (error) {
+        console.error('Error getting AI suggestions:', error);
+        setHasError(true);
+      } finally {
+        setIsLoadingSuggestions(false);
+      }
+    };
+
+    fetchAiSuggestions();
+  }, [formData]);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -156,6 +198,43 @@ const NextSteps = () => {
                 </div>
               ))}
             </div>
+          </CardContent>
+        </Card>
+
+        {/* AI Suggestions Section */}
+        <Card className="mb-8 border-2 bg-gradient-to-br from-primary/5 to-primary/10">
+          <CardHeader>
+            <CardTitle className="text-3xl font-extrabold flex items-center gap-3">
+              <Sparkles className="h-8 w-8 text-primary" />
+              AI-Powered Career Recommendations
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoadingSuggestions ? (
+              <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                <Loader2 className="w-12 h-12 text-primary animate-spin" />
+                <p className="text-lg font-medium text-muted-foreground">
+                  Generating personalized suggestions for your profile...
+                </p>
+              </div>
+            ) : hasError ? (
+              <Alert variant="destructive">
+                <AlertDescription>
+                  Unable to generate AI suggestions at this time. Please check the resources below for guidance.
+                </AlertDescription>
+              </Alert>
+            ) : aiSuggestions ? (
+              <Alert className="bg-white/50 border-primary/30">
+                <Sparkles className="h-5 w-5 text-primary" />
+                <AlertDescription className="mt-2">
+                  <div className="prose prose-sm max-w-none">
+                    <div className="whitespace-pre-line text-base leading-relaxed font-medium">
+                      {aiSuggestions}
+                    </div>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            ) : null}
           </CardContent>
         </Card>
 

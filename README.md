@@ -1,73 +1,164 @@
-# Welcome to your Lovable project
+# Nurse Align
 
-## Project info
+A platform connecting international nurses with Canadian healthcare opportunities, featuring AI-powered career suggestions.
 
-**URL**: https://lovable.dev/projects/1fba345e-13e2-4719-ae74-51fbe01c27c7
+## Features
 
-## How can I edit this code?
+- 🏥 Nurse profile creation and management
+- 🤖 AI-powered personalized career recommendations (using HuggingFace API)
+- 🎯 Job matching based on specialization and experience
+- 📋 Credential guidance for international nurses
+- 🌍 Country-specific pathways (US, Mexico, and other countries)
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Frontend**: React + TypeScript + Vite
+- **UI**: Tailwind CSS + shadcn/ui components
+- **Routing**: React Router v6
+- **AI**: OpenAI SDK with HuggingFace Router (Kimi-K2-Instruct model)
+- **Deployment**: Vercel (Frontend + Serverless Functions)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1fba345e-13e2-4719-ae74-51fbe01c27c7) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js 20.x or higher
+- npm or yarn
+- HuggingFace API token ([get one here](https://huggingface.co/settings/tokens))
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. Clone the repository:
+```bash
+git clone <your-repo-url>
+cd Nurse-Align
+```
 
-Follow these steps:
+2. Install dependencies:
+```bash
+npm install
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. Create a `.env.local` file in the project root:
+```bash
+HF_TOKEN=your_huggingface_token_here
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Development
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+Run the development server with API:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+This will start:
+- **Vite dev server** on http://localhost:8080 (frontend)
+- **API server** on http://localhost:3001 (backend)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The frontend automatically proxies `/api/*` requests to the API server.
 
-**Use GitHub Codespaces**
+Visit: **http://localhost:8080** to use the app with full AI functionality.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Project Structure
 
-## What technologies are used for this project?
+```
+Nurse-Align/
+├── api/                    # Vercel serverless functions (production)
+│   └── suggestions.js      # AI suggestions endpoint
+├── server.js               # Local development API server
+├── src/
+│   ├── components/         # Reusable UI components
+│   │   ├── ui/            # shadcn/ui components
+│   │   ├── Navbar.tsx
+│   │   └── NavLink.tsx
+│   ├── pages/             # Route pages
+│   │   ├── Home.tsx
+│   │   ├── SignUp.tsx
+│   │   ├── NextSteps.tsx
+│   │   ├── Jobs.tsx
+│   │   └── Credentials.tsx
+│   ├── hooks/             # Custom React hooks
+│   ├── lib/               # Utility functions
+│   └── services/          # API services
+├── public/                # Static assets
+├── vercel.json           # Vercel deployment config
+└── vite.config.ts        # Vite configuration
+```
 
-This project is built with:
+## How AI Suggestions Work
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. User fills out the sign-up form with their nursing profile
+2. Upon submission, they're redirected to the NextSteps page
+3. The page automatically calls `/api/suggestions` endpoint
+4. The serverless function sends profile data to HuggingFace API
+5. AI generates 3-5 personalized career recommendations
+6. Suggestions are displayed before the job listings
 
-## How can I deploy this project?
+## Deployment
 
-Simply open [Lovable](https://lovable.dev/projects/1fba345e-13e2-4719-ae74-51fbe01c27c7) and click on Share -> Publish.
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions to Vercel.
 
-## Can I connect a custom domain to my Lovable project?
+Quick steps:
+1. Push code to GitHub
+2. Import project to Vercel
+3. Add `HF_TOKEN` environment variable
+4. Deploy!
 
-Yes, you can!
+## Environment Variables
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `HF_TOKEN` | HuggingFace API token | Yes |
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## API Endpoints
+
+### POST `/api/suggestions`
+Generates AI-powered career suggestions for a nurse profile.
+
+**Request Body:**
+```json
+{
+  "formData": {
+    "fullName": "Jane Smith",
+    "currentCountry": "USA",
+    "nursingLicense": "RN",
+    "yearsExperience": "5-10",
+    "specialization": "ICU",
+    "education": "BSN",
+    "additionalInfo": "..."
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "suggestions": "1. Complete NNAS...\n2. Focus on...",
+  "success": true
+}
+```
+
+## Scripts
+
+- `npm run dev` - Start development (Vite + API server)
+- `npm run dev:vite` - Start Vite only (no API)
+- `npm run dev:api` - Start API server only
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License.
+
+## Support
+
+For questions or support, please open an issue on GitHub.
