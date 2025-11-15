@@ -1,37 +1,109 @@
-import { Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, ArrowRight, ExternalLink, Briefcase } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
 const NextSteps = () => {
-  const steps = [
-    "Complete NNAS evaluation of your nursing education",
-    "Have credentials translated by certified translator",
-    "Apply to provincial nursing regulatory body",
-    "Complete any additional education requirements",
-    "Pass NCLEX-RN and provincial jurisprudence exam",
-    "Demonstrate English/French language proficiency (IELTS/CELBAN)",
-    "Apply for work permit through employer sponsorship"
-  ];
+  const location = useLocation();
+  const formData = location.state?.formData || {};
+  
+  const isFromMexico = formData.currentCountry?.toLowerCase().includes("mexico");
+  const isFromUS = formData.currentCountry?.toLowerCase().includes("us") || 
+                   formData.currentCountry?.toLowerCase().includes("united states");
+  
+  // Customize steps based on country
+  const getSteps = () => {
+    const baseSteps = [
+      "Complete NNAS evaluation of your nursing education",
+      "Have credentials translated by certified translator",
+      "Apply to provincial nursing regulatory body",
+      "Complete any additional education requirements",
+      "Pass NCLEX-RN and provincial jurisprudence exam",
+    ];
 
-  const resources = [
-    {
-      name: "NNAS (National Nursing Assessment Service)",
-      url: "https://www.nnas.ca",
-      description: "Credential assessment and advisory reports for internationally educated nurses"
-    },
-    {
-      name: "Immigration, Refugees and Citizenship Canada",
-      url: "https://www.canada.ca/en/immigration-refugees-citizenship.html",
-      description: "Official government immigration information and work permit applications"
-    },
-    {
-      name: "Provincial Nursing Regulators",
-      url: "#",
-      description: "Each province has its own regulatory body (CNO, BCCNM, CARNA, etc.)"
+    if (isFromMexico) {
+      return [
+        ...baseSteps,
+        "Demonstrate English/French language proficiency (IELTS/CELBAN) - Spanish speakers may need additional language training",
+        "Apply for work permit through employer sponsorship (TN visa not applicable for Mexico)"
+      ];
+    } else if (isFromUS) {
+      return [
+        ...baseSteps,
+        "Demonstrate English/French language proficiency (IELTS/CELBAN) - typically easier for native English speakers",
+        "Apply for work permit through employer sponsorship or TN visa"
+      ];
+    } else {
+      return [
+        ...baseSteps,
+        "Demonstrate English/French language proficiency (IELTS/CELBAN)",
+        "Apply for work permit through employer sponsorship"
+      ];
     }
-  ];
+  };
+
+  const steps = getSteps();
+
+  // Customize resources based on country and needs
+  const getResources = () => {
+    const baseResources = [
+      {
+        name: "NNAS (National Nursing Assessment Service)",
+        url: "https://www.nnas.ca",
+        description: "Credential assessment and advisory reports for internationally educated nurses"
+      },
+      {
+        name: "Immigration, Refugees and Citizenship Canada",
+        url: "https://www.canada.ca/en/immigration-refugees-citizenship.html",
+        description: "Official government immigration information and work permit applications"
+      },
+      {
+        name: "Provincial Nursing Regulators",
+        url: "#",
+        description: "Each province has its own regulatory body (CNO, BCCNM, CARNA, etc.)"
+      }
+    ];
+
+    if (isFromMexico) {
+      return [
+        ...baseResources,
+        {
+          name: "Mexican Nurses → Canada Support",
+          url: "https://www.canada.ca/en/immigration-refugees-citizenship/services/work-canada.html",
+          description: "Specific guidance for Mexican healthcare professionals transitioning to Canada"
+        },
+        {
+          name: "Language Training Resources",
+          url: "https://www.canada.ca/en/immigration-refugees-citizenship/services/new-immigrants/new-life-canada/improve-english-french.html",
+          description: "English and French language programs for Spanish-speaking professionals"
+        }
+      ];
+    } else if (isFromUS) {
+      return [
+        ...baseResources,
+        {
+          name: "NAFTA/USMCA TN Visa for Nurses",
+          url: "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/publications-manuals/operational-bulletins-manuals/temporary-residents/foreign-workers/international-free-trade-agreements/north-american.html",
+          description: "Streamlined work permit process for US healthcare professionals"
+        }
+      ];
+    } else {
+      return baseResources;
+    }
+  };
+
+  const resources = getResources();
+
+  const getEstimatedTimeline = () => {
+    if (isFromUS) {
+      return "3-5 months";
+    } else if (isFromMexico) {
+      return "5-7 months";
+    } else {
+      return "4-6 months";
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -41,15 +113,28 @@ const NextSteps = () => {
         {/* Hero Section */}
         <div className="text-center mb-12 space-y-4">
           <div className="inline-block bg-primary/10 px-6 py-2 rounded-full mb-4">
-            <span className="text-primary font-bold text-lg">Welcome to Nurse Align! 🎉</span>
+            <span className="text-primary font-bold text-lg">
+              Welcome{formData.fullName ? `, ${formData.fullName}` : ""} to Nurse Align! 🎉
+            </span>
           </div>
           <h1 className="text-4xl lg:text-5xl font-extrabold">
-            International Nurses → Canada
+            {formData.currentCountry ? `${formData.currentCountry} Nurses → Canada` : "International Nurses → Canada"}
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            {isFromMexico && "As a nurse from Mexico, "}
+            {isFromUS && "As a nurse from the United States, "}
             International nurses must have their credentials assessed before practicing in Canada. 
-            This process typically takes <span className="font-bold text-primary">4-6 months</span>.
+            Based on your profile, this process typically takes{" "}
+            <span className="font-bold text-primary">{getEstimatedTimeline()}</span>.
           </p>
+          {formData.specialization && (
+            <div className="inline-block bg-light-blue/30 px-6 py-3 rounded-lg mt-4">
+              <p className="text-base font-semibold">
+                Your specialty: <span className="text-primary font-bold">{formData.specialization}</span>
+                {" "}• Experience: <span className="text-primary font-bold">{formData.yearsExperience} years</span>
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Steps Section */}
@@ -57,7 +142,7 @@ const NextSteps = () => {
           <CardHeader>
             <CardTitle className="text-3xl font-extrabold flex items-center gap-3">
               <CheckCircle className="h-8 w-8 text-primary" />
-              Steps to Practice in Canada
+              Your Personalized Path to Practice in Canada
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -79,7 +164,7 @@ const NextSteps = () => {
           <CardHeader>
             <CardTitle className="text-3xl font-extrabold flex items-center gap-3">
               <ExternalLink className="h-8 w-8 text-primary" />
-              Important Resources
+              Important Resources for You
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -111,10 +196,15 @@ const NextSteps = () => {
         <Card className="bg-primary text-primary-foreground border-0 shadow-xl">
           <CardContent className="p-12 text-center space-y-6">
             <Briefcase className="h-16 w-16 mx-auto mb-4" />
-            <h2 className="text-3xl lg:text-4xl font-extrabold">Ready to Find Your Perfect Role?</h2>
+            <h2 className="text-3xl lg:text-4xl font-extrabold">
+              {formData.specialization 
+                ? `Find ${formData.specialization} Positions in Canada`
+                : "Ready to Find Your Perfect Role?"}
+            </h2>
             <p className="text-lg lg:text-xl opacity-90 max-w-2xl mx-auto">
               Browse our curated job board featuring positions from top healthcare facilities 
-              across Canada that are ready to sponsor international nurses.
+              across Canada that are ready to sponsor international nurses
+              {formData.specialization && ` in ${formData.specialization}`}.
             </p>
             <Button 
               asChild
@@ -122,7 +212,12 @@ const NextSteps = () => {
               variant="secondary"
               className="btn-hover-lift font-bold text-lg px-8 py-6"
             >
-              <Link to="/jobs">Find Matching Jobs</Link>
+              <Link 
+                to="/jobs" 
+                state={{ specialty: formData.specialization }}
+              >
+                Find Matching Jobs
+              </Link>
             </Button>
           </CardContent>
         </Card>
@@ -142,4 +237,3 @@ const NextSteps = () => {
 };
 
 export default NextSteps;
-

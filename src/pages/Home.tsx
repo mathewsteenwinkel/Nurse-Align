@@ -43,7 +43,7 @@ const Home = () => {
   ];
 
   const stats = [
-    { value: "1,200+", label: "Nurses Placed" },
+    { value: "1,200+", label: "Nurses Helped" },
     { value: "150+", label: "Healthcare Partners" },
     { value: "95%", label: "Success Rate" },
     { value: "50+", label: "Canadian Cities" }
@@ -158,7 +158,7 @@ const Home = () => {
               </div>
               <div className="absolute -bottom-6 -left-6 bg-primary text-primary-foreground p-6 rounded-xl shadow-lg">
                 <p className="text-4xl font-extrabold">1,200+</p>
-                <p className="text-sm font-bold">Nurses Placed</p>
+                <p className="text-sm font-bold">Nurses Helped</p>
               </div>
             </div>
           </div>

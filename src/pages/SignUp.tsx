@@ -33,7 +33,7 @@ const SignUp = () => {
     });
     
     setTimeout(() => {
-      navigate("/next-steps");
+      navigate("/next-steps", { state: { formData } });
     }, 2000);
   };
 

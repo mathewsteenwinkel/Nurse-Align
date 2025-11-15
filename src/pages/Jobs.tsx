@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,7 +8,9 @@ import { MapPin, DollarSign, Clock, Search } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
 const Jobs = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const location = useLocation();
+  const filterSpecialty = location.state?.specialty || "";
+  const [searchTerm, setSearchTerm] = useState(filterSpecialty);
   
   const jobs = [
     {
@@ -18,6 +21,7 @@ const Jobs = () => {
       salary: "$75,000 - $95,000 CAD",
       type: "Full-time",
       specialty: "Emergency Care",
+      experience: "3+ years",
       description: "Seeking experienced ER nurses to join our dynamic emergency department."
     },
     {
@@ -28,6 +32,7 @@ const Jobs = () => {
       salary: "$80,000 - $100,000 CAD",
       type: "Full-time",
       specialty: "ICU",
+      experience: "5+ years",
       description: "Join our award-winning intensive care unit team caring for critical patients."
     },
     {
@@ -38,6 +43,7 @@ const Jobs = () => {
       salary: "$70,000 - $90,000 CAD",
       type: "Full-time",
       specialty: "Pediatric",
+      experience: "2+ years",
       description: "Make a difference in children's lives in our state-of-the-art pediatric facility."
     },
     {
@@ -48,6 +54,7 @@ const Jobs = () => {
       salary: "$72,000 - $92,000 CAD",
       type: "Full-time",
       specialty: "Surgical",
+      experience: "3+ years",
       description: "Bilingual surgical nurses needed for our expanding surgical department."
     },
     {
@@ -58,6 +65,7 @@ const Jobs = () => {
       salary: "$78,000 - $98,000 CAD",
       type: "Full-time",
       specialty: "Oncology",
+      experience: "4+ years",
       description: "Compassionate oncology nurses to provide specialized cancer care."
     },
     {
@@ -68,7 +76,74 @@ const Jobs = () => {
       salary: "$68,000 - $85,000 CAD",
       type: "Full-time",
       specialty: "General",
+      experience: "2+ years",
       description: "Community-focused nursing role in a welcoming coastal city."
+    },
+    {
+      id: 7,
+      title: "Mental Health Nurse",
+      hospital: "Centre for Addiction and Mental Health",
+      location: "Toronto, ON",
+      salary: "$76,000 - $94,000 CAD",
+      type: "Full-time",
+      specialty: "Mental Health",
+      experience: "3+ years",
+      description: "Support patients with mental health and addiction challenges in Canada's leading psychiatric facility."
+    },
+    {
+      id: 8,
+      title: "Maternity & Labor Nurse",
+      hospital: "Women's College Hospital",
+      location: "Toronto, ON",
+      salary: "$74,000 - $92,000 CAD",
+      type: "Full-time",
+      specialty: "Maternity",
+      experience: "3+ years",
+      description: "Join our maternity ward helping bring new life into the world with compassionate care."
+    },
+    {
+      id: 9,
+      title: "Geriatric Care Nurse",
+      hospital: "Baycrest Hospital",
+      location: "Toronto, ON",
+      salary: "$70,000 - $88,000 CAD",
+      type: "Full-time",
+      specialty: "Geriatric",
+      experience: "2+ years",
+      description: "Provide specialized care to elderly patients in a leading geriatric healthcare center."
+    },
+    {
+      id: 10,
+      title: "Emergency Room Nurse",
+      hospital: "Ottawa Hospital",
+      location: "Ottawa, ON",
+      salary: "$76,000 - $96,000 CAD",
+      type: "Full-time",
+      specialty: "Emergency Care",
+      experience: "4+ years",
+      description: "Fast-paced ER environment in Canada's capital city. Trauma experience preferred."
+    },
+    {
+      id: 11,
+      title: "ICU Critical Care Nurse",
+      hospital: "Foothills Medical Centre",
+      location: "Calgary, AB",
+      salary: "$82,000 - $102,000 CAD",
+      type: "Full-time",
+      specialty: "ICU",
+      experience: "5+ years",
+      description: "Work with cutting-edge technology in Alberta's premier critical care unit."
+    },
+    {
+      id: 12,
+      title: "Cardiac Care Nurse",
+      hospital: "St. Paul's Hospital",
+      location: "Vancouver, BC",
+      salary: "$77,000 - $97,000 CAD",
+      type: "Full-time",
+      specialty: "Cardiac",
+      experience: "4+ years",
+      description: "Specialized cardiac nursing in one of BC's top cardiovascular centers."
     }
   ];
 
